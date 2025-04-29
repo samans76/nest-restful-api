@@ -72,27 +72,31 @@ let users: User[] = [
 
 @Injectable()
 export class UsersService {
+    constructor() {
+        console.log("user service created")
+    }
+
     find(gender?: "Male" | "Female") {
         if (gender) return users.filter((u) => u.gender === gender)
         return users
     }
-    findOne(id: string) {
-        return users.find((u) => u.id === +id)
+    findOne(id: number) {
+        return users.find((u) => u.id === id)
     }
     createOne(user: User) {
-        if (users.find((u) => u.id === user.id))
-            users.push(user)
+        if (users.find((u) => u.id === user.id)) throw new Error("user with this id already exists")
+        users.push(user)
         return user
     }
-    updateOne(id: string, user: Omit<User, "id">) {
+    updateOne(id: number, user: Omit<User, "id">) {
         const updatedUser = { id: +id, ...user }
-        const idx = users.findIndex((u) => u.id === +id)
-        users = users.splice(idx, 1, updatedUser)
+        const idx = users.findIndex((u) => u.id === id)
+        users.splice(idx, 1, updatedUser)
         return updatedUser
     }
-    deleteOne(id: string) {
-        const idx = users.findIndex((u) => u.id === +id)
-        users = users.splice(idx, 1)
+    deleteOne(id: number) {
+        const idx = users.findIndex((u) => u.id === id)
+        users.splice(idx, 1)
         return users
     }
 }
